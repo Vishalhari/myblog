@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable
+class User extends Model implements AuthenticatableContract, CanResetPasswordContract
 {
     /**
      * The attributes that are mass assignable.
@@ -23,4 +23,33 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+
+     public function posts()
+        {
+        return $this->hasMany('App\Posts','author_id');
+        }
+        // user has many comments
+        public function comments()
+        {
+        return $this->hasMany('App\Comments','from_user');
+        }
+        public function can_post()
+        {
+        $role = $this->role;
+        if($role == 'author' || $role == 'admin')
+        {
+        return true;
+        }
+        return false;
+        }
+        public function is_admin()
+        {
+        $role = $this->role;
+        if($role == 'admin')
+        {
+        return true;
+        }
+        return false;
+        } 
 }

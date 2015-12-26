@@ -15,7 +15,40 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('Home','BlogController@index');
+Route::controllers([
+'auth' => 'Auth\AuthController',
+'password' => 'Auth\PasswordController',
+]); 
+
+// check for logged in user
+Route::controllers([
+'auth' => 'Auth\AuthController',
+'password' => 'Auth\PasswordController',
+]);
+// check for logged in user
+Route::group(['middleware' => ['auth']], function()
+{
+// show new post form
+Route::get('new-post','PostController@create');
+// save new post
+Route::post('new-post','PostController@store');
+// edit post form
+Route::get('edit/{slug}','PostController@edit');
+// update post
+Route::post('update','PostController@update');
+// delete post
+Route::get('delete/{id}','PostController@destroy');
+// display user's all posts
+Route::get('my-all-posts','UserController@user_posts_all');
+// display user's drafts
+Route::get('my-drafts','UserController@user_posts_draft');
+// add comment
+Route::post('comment/add','CommentController@store');
+// delete comment
+Route::post('comment/delete/{id}','CommentController@distroy');
+}); 
+
+//Route::get('Home','BlogController@index');
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +61,18 @@ Route::get('Home','BlogController@index');
 |
 */
 
-Route::group(['middleware' => ['web']], function () {
-    //
+// Route::group(['middleware' => ['web']], function () {
+//     //
+// });
+
+// Route::group(['middleware' => 'web'], function () {
+//     Route::auth();
+
+//     Route::get('/home', 'HomeController@index');
+// });
+
+Route::group(['middleware' => 'web'], function () {
+    Route::auth();
+
+    Route::get('/home', 'HomeController@index');
 });
